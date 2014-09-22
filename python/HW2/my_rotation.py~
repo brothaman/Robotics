@@ -1,0 +1,3 @@
+import my_rotation_function as mrf
+
+mrf.my_rotation(90);

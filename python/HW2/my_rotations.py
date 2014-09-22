@@ -1,0 +1,11 @@
+import my_rotation_function as mrf
+import numpy as np
+a = []
+
+for i in range(101):
+	a.append( mrf.my_rotation(np.pi*i/1000.0))
+
+for val in a:
+	print val
+	print "\n"
+
