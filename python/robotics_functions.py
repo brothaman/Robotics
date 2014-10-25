@@ -1,4 +1,4 @@
-import numpy as np, sympy as sp
+import numpy as np, sympy as sy
 
 #define numerical rotation matricies
 def rotation_z(theta):
@@ -95,11 +95,20 @@ def convert3x3to4x4( matrix):
 # symbolically convert 3x3 rotation to 4x4 rotation
 def syms_convert3x3to4x4( matrix):
 	# add column of zeroes
-	matrix = sy.Matrix.hstack(matrix, sy.Matrix(sy.zeros(3))
+	matrix = sy.Matrix.hstack(matrix, sy.Matrix(sy.zeros(3)[:,2]))
 	# add row of 0,0,0,1
-	matrix = np.vstack((matrix, sy.Matrix([0,0,0,1]).T))
+	matrix = sy.Matrix.vstack((matrix, sy.Matrix([0,0,0,1]).T))
 	return matrix
 
-def denavait_hartenberg( link_list):
-		
+def denavit_hartenberg( link_list):
+	return (
+		translation_z(link_list[0])*convert3x3to4x4(rotation_z(link_list[1]))*
+		translation_x(link_list[2])*convert3x3to4x4(rotation_x(link_list[3]))
+		)
+def sym_denavit_hartenberg( link_list):
+	return (
+		sym_translation_z(link_list[0])*sy.Matrix(syms_convert3x3to4x4(sym_rotation_z(link_list[1])))*
+		sym_translation_x(link_list[2])*sy.Matrix(syms_convert3x3to4x4(sym_rotation_x(link_list[3])))
+		)
+
 
