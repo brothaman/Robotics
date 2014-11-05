@@ -127,6 +127,11 @@ def sym_get_A0n( link_list):
 		A0n.append(A0i)
 	return A0n
 
+#def get_A0i()
+#def sym_get_A0i()
+#def get_O0i()
+#def sym_get_O0i()
+
 
 def jacobian( link_list):
 	A0n = get_A0n( link_list)
@@ -180,8 +185,13 @@ def symbolic_jacobian( link_list):
 			J_w.append(sy.Matrix(R[i]*k))
 	J = [sy.Matrix.vstack( J_v[i], J_w[i]) for i in range(len(J_v))]
 	J = sy.Matrix.hstack(J)
-	return J
+	Je= J[0]
+	for i in range(len(J)-1):
+		j = i+1
+		Je = sy.Matrix.hstack(Je, J[j])
+	return Je
 
 
 #def rotational_velocity_jacobian( link_list)
 #def jacobian(link_list)
+#def lagrangian()
