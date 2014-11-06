@@ -127,8 +127,18 @@ def sym_get_A0n( link_list):
 		A0n.append(A0i)
 	return A0n
 
-#def get_A0i()
-#def sym_get_A0i()
+def get_A0i():
+	A0i = []
+	for link in link_list:
+		A0i.append(denavit_hartenberg( link))
+	return A0i
+
+def sym_get_A0i(link_list):
+	A0i = []
+	for link in link_list:
+		A0i.append(sym_denavit_hartenberg( link))
+	return A0i
+
 #def get_O0i()
 #def sym_get_O0i()
 
@@ -191,7 +201,50 @@ def symbolic_jacobian( link_list):
 		Je = sy.Matrix.hstack(Je, J[j])
 	return Je
 
+def sym_cm_jacobian(link_list, cm_link_list):
+	return 0#Jcm
+
+def sym_pt_jacobian(link_list_position):
+	k = sy.Matrix([[0],[0],[1]])
+	[link_list, pt_list] = link_list_position
+#	print link_list
+#	print type(pt_list[0])
+	A0i = sym_get_A0n(link_list)
+#	print sy.pprint(sy.trigsimp(A0i[1]))
+	O0i = [A0i[i]*pt_list[i] if type(pt_list[i])== type(A0i[i]) else 
+			sy.Matrix(A0i[i][:,3][:3]) for i in range(len(A0i)) ]
+#	print sy.pprint(sy.trigsimp(O0i[1]))
+	A0i = [sy.eye(4)]+A0i
+	Jpt = []
+	for i in range(len(link_list)):
+		j_pt = []
+		jci = sy.Matrix(np.zeros(6)).T
+		for j in range(len(link_list)):
+			if j <= i:
+				if not link_list[i][-1] == 0:
+					j_pt.append( sy.Matrix.vstack((A0i[j][:3,:3]*k).cross(
+						sy.Matrix(O0i[i][:3])-sy.Matrix(A0i[j][:,3][:3])),
+						A0i[j][:3,:3]*k)
+						)
+				else:
+					j_pt.append( sy.Matrix.vstack(A0i[j][:3,:3]*k, sy.Matrix([[0],[0],[0]])))
+			else:
+				j_pt.append( sy.Matrix(np.zeros(6)).T)
+		q = j_pt[0]
+		for i in range(len(j_pt)-1):
+			j = i+1
+			q = sy.Matrix.hstack(q, j_pt[j])
+		Jpt.append(q)
+	for jac in Jpt:
+		sy.pprint(sy.trigsimp(jac))
+	return Jpt
+
+
 
 #def rotational_velocity_jacobian( link_list)
 #def jacobian(link_list)
-#def lagrangian()
+# need a function to return the F from the lagrangian and a list of all the time dependent variables
+def lagrangian(link_list):
+	K = ()
+	P = ()
+	return K-P
