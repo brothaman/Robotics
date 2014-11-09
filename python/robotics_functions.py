@@ -1,5 +1,14 @@
 import numpy as np, sympy as sy
 
+gravity = sy.symbols("g")
+
+def symsum( listin):
+	val = sy.zeros(listin[0].shape)
+	for i in listin:
+		val = val+i
+	return val
+
+
 #define numerical rotation matricies
 def rotation_z(theta):
 	return np.matrix([
@@ -139,11 +148,8 @@ def sym_get_A0i(link_list):
 		A0i.append(sym_denavit_hartenberg( link))
 	return A0i
 
-#def get_O0i()
-#def sym_get_O0i()
 
-
-def jacobian( link_list):
+def end_jacobian( link_list):
 	A0n = get_A0n( link_list)
 	# rotational vectors
 	R = [np.matrix(np.identity(3))]
@@ -158,9 +164,6 @@ def jacobian( link_list):
 	for i in range(len(A0n)):
 		# if theta_i is 0 then joint is prismatic
 		if (link_list[i][3] == 0):
-			print np.shape(sy.Matrix(R[i]*k))
-			print sy.Matrix(R[i]*k)
-			print np.shape(sy.Matrix([[0],[0],[0]]))
 			J_v.append(sy.Matrix(R[i]*k))
 			J_w.append(sy.Matrix([[0],[0],[0]]))
 		# if theta_i is not 0 then joint is revolute
@@ -172,7 +175,7 @@ def jacobian( link_list):
 	return J
 
 
-def symbolic_jacobian( link_list):
+def sym_end_jacobian( link_list):
 	A0n = sym_get_A0n( link_list)
 	# rotational vectors
 	R = [sy.Matrix(np.identity(3))]
@@ -201,19 +204,15 @@ def symbolic_jacobian( link_list):
 		Je = sy.Matrix.hstack(Je, J[j])
 	return Je
 
-def sym_cm_jacobian(link_list, cm_link_list):
+def sym_cm_jacobian(link_list):
 	return 0#Jcm
 
 def sym_pt_jacobian(link_list_position):
 	k = sy.Matrix([[0],[0],[1]])
 	[link_list, pt_list] = link_list_position
-#	print link_list
-#	print type(pt_list[0])
 	A0i = sym_get_A0n(link_list)
-#	print sy.pprint(sy.trigsimp(A0i[1]))
 	O0i = [A0i[i]*pt_list[i] if type(pt_list[i])== type(A0i[i]) else 
 			sy.Matrix(A0i[i][:,3][:3]) for i in range(len(A0i)) ]
-#	print sy.pprint(sy.trigsimp(O0i[1]))
 	A0i = [sy.eye(4)]+A0i
 	Jpt = []
 	for i in range(len(link_list)):
@@ -235,16 +234,36 @@ def sym_pt_jacobian(link_list_position):
 			j = i+1
 			q = sy.Matrix.hstack(q, j_pt[j])
 		Jpt.append(q)
-	for jac in Jpt:
-		sy.pprint(sy.trigsimp(jac))
 	return Jpt
 
 
 
 #def rotational_velocity_jacobian( link_list)
 #def jacobian(link_list)
+def D_i( vec):
+	[Ji, Mi, Ii, Ri] = vec
+	Jv = Ji[:3,:]
+	Jw = Ji[3:,:]
+	return Jv.T*Mi*Jv + Jw.T*Ri*Ii*Ri.T*Jw
+
+
 # need a function to return the F from the lagrangian and a list of all the time dependent variables
-def lagrangian(link_list):
-	K = ()
-	P = ()
+def sym_lagrangian(link_list_cm, M, I, qdot):
+	g = sy.Matrix([[0],[gravity],[0]])
+	[link_list, Ocm] = link_list_cm
+	A = sym_get_A0n(link_list)
+	R = [Ai[:3,:3] for Ai in A]
+	O = [sy.Matrix(Ai[:,3][:3]) for Ai in A]
+	J = sym_pt_jacobian(link_list_cm)
+	D = symsum([D_i([ J[i], M[i], I[i], R[i]]) for i in range( len(J))])
+	K = .5*(qdot.T*(D)*qdot)
+	O0c = [A[i]*Ocm[i] for i in range(len(A))]
+	P = symsum( [g.T*M[i]*sy.Matrix(O0c[i][:3]) for i in range(len(J))])
 	return K-P
+
+def sym_torque(link_list_cm, M, I, qdot, q, tdv_vec):
+	L = sym_lagrangian(link_list_cm, M, I, qdot)[0]
+	dLdq_dot = sum([sy.diff(L, qdot[i]) for i in range(len(qdot))])
+	dLdq =  sum([sy.diff(L, q[i]) for i in range(len(q))])
+	ddtdLdq_dot = sum([sy.diff(dLdq_dot, tdv_vec[i][0])*tdv_vec[i][1] for i in range(len(tdv_vec))])
+	return ddtdLdq_dot - dLdq

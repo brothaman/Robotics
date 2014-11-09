@@ -1,0 +1,143 @@
+\documentclass[10pt]{article}
+\usepackage{setspace}
+\usepackage{amsmath,amsfonts,amsthm,amssymb}
+\usepackage{color}
+\usepackage{fancyhdr}
+\usepackage{chngpage}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\usepackage{boxedminipage}
+
+\title{The Euler-Lagrangian of the Ein Concept \LaTeX}
+\author{Robert Brothers Mechanical Engineering Student @ UTSA}
+\begin{document}
+\doublespacing
+\footnotesize
+\maketitle
+\date
+
+\abstract{Using the Denavit-Hartenberg Parameters the Lagrangian of Ein was Calculated to be L}
+
+\section{Question: The Lagrangian}
+\subsection{question about the lagrangian}
+when i take the derivative of the lagrangian w/ respect to q
+do i take the derivative of each q? 
+and are the dependent on one another?
+if i differentiate $q_{1}q_{2}$ with respect to $q_{1}$ what do i get?
+
+\begin{equation}
+M_{i} = 
+\begin{bmatrix}
+m_{i} & 0 & 0 \\
+0 & m_{i} & 0 \\
+0 & 0 & m_{i} \\
+\end{bmatrix}
+\end{equation}
+
+\begin{equation}
+I_{b,i} = 
+\begin{bmatrix}
+I_{x} & 0 & 0 \\
+0 & I_{y} & 0 \\
+0 & 0 & I_{z} \\
+\end{bmatrix}
+\end{equation}
+
+
+
+\begin{equation}
+L & = & K & - & P
+\end{equation}
+
+\begin{equation}
+K & = & \frac{M_{i}V_{i}^{2}}{2} = 
+\frac{1}{2}\dot{q^{T}}\left[\sum\limits_{i=1}^{n} M_{i}J_{v,i}^{T}J_{v,i} + \\
+J_{\omega,i}^{T}R_{i}I_{b,i}R_{i}^{T}J_{\omega,i}\right]\dot{q}
+\end{equation} 
+
+\begin{equation}
+J_{i} = 
+\begin{bmatrix}
+J_{v,i} \\
+J_{\omega,i}\\
+\end{bmatrix}
+=
+\begin{bmatrix}
+J_{v_{0}} & J_{v_{1}} & \dots & J_{v_{n}} \\
+J_{\omega_{0}} & J_{\omega_{1}} & \dots & J_{\omega_{n}}
+\end{bmatrix}
+\end{equation}
+
+\begin{equation}
+P & = & M_{i}gh\\
+= \sum\limits_{i=1}^{n} \vec{g}^{T} M_{i} \vec{r}_{c,i}
+\end{equation}
+
+
+\section{Results}
+
+\subsection{Denavit-Hartenberg Parameters}
+\begin{center}
+\begin{tabular}{| 1 | p{1cm} | p{1cm} | p{1cm} | p{1cm} |}
+\hline
+Link_{i} & a_{i} & $\alpha_{i}$ & d_{i} & $\theta_{i}$ \\ \hline
+1 & 0 & $\frac{\pi}{2}$ & L_{t} & $\theta_{t}$ \\ \hline
+2 & 0 & 0 & L_{s} & 0 \\ \hline
+\end{tabular}
+\end{center}
+
+\subsection{Jacobian}
+
+\subsubsection{Jacobian of Link One's Center of Mass}
+\begin{equation}
+J_{1} = 
+\left[\begin{matrix}
+- 0.5 l_{1} \sin{\left (t_{1} \right )} & 0\\
+0.5 l_{1} \cos{\left (t_{1} \right )} & 0\\
+0 & 0\\
+0 & 0\\
+0 & 0\\
+1 & 0
+\end{matrix}\right]
+\end{equation}
+
+\subsubsection{Jacobian of Link Two's Center of Mass}
+\begin{equation}
+J_{2} = 
+\begin{bmatrix}
+- 0.5 a_{2} \sin{\left (t_{1} + t_{2} \right )} - 1.0 l_{1} \sin{\left (t_{1} \right )} & - 0.5 a_{2} \sin{\left (t_{1} + t_{2} \right )}\\
+0.5 a_{2} \cos{\left (t_{1} + t_{2} \right )} + 1.0 l_{1} \cos{\left (t_{1} \right )} & 0.5 a_{2} \cos{\left (t_{1} + t_{2} \right )}\\
+0 & 0\\
+0 & 0\\
+0 & 0\\
+1 & 1.0
+\end{bmatrix}
+\end{equation}
+
+\subsection{Lagrangian Results}
+\begin{equation}
+\begin{align}
+L  &=  0.125 a_{2}^{2} m_{2} q_{1}^{2} + 0.25 a_{2}^{2} m_{2} q_{1} q_{2} + \nonumber\\
+&\qquad 0.125 a_{2}^{2} m_{2} q_{2}^{2}  - 0.5 a_{2} g m_{2} \sin{\left (t_{1} + t_{2} \right )} + \nonumber\\
+&\qquad 0.5 a_{2} l_{1} m_{2} q_{1}^{2} \cos{\left (t_{2} \right )}  +  0.5 a_{2} l_{1} m_{2} q_{1} q_{2} \cos{\left (t_{2} \right )} - \nonumber\\
+&\qquad 0.5 g l_{1} m_{1} \sin{\left (t_{1} \right )} -  1.0 g l_{1} m_{2} \sin{\left (t_{1} \right )} + \nonumber\\
+&\qquad 0.291666666666667 l_{1}^{2} m_{1} q_{1}^{2} + 0.5 l_{1}^{2} m_{2} q_{1}^{2} + \nonumber\\
+&\qquad 0.523598775598567 m_{2} q_{1}^{2} r_{2}^{2} + 1.04719755119713 m_{2} q_{1} q_{2} r_{2}^{2} + \nonumber\\
+&\qquad 0.523598775598567 m_{2} q_{2}^{2} r_{2}^{2}
+\end{align}
+\end{equation}
+
+\subsection{Torque: Derived from the Lagrangian}
+\begin{equation}
+\begin{align}
+\tau_{k} &= 0.5 a_{2}^{2} m_{2} \ddot{q}_{1} + 0.5 a_{2}^{2} m_{2} \ddot{q}_{2} + 1.0 a_{2} g m_{2} \cos{\left (q_{1} + q_{2} \right )} \nonumber\\
+&\qquad + 1.5 a_{2} l_{1} m_{2} \ddot{q}_{1} \cos{\left (q_{2} \right )} + 0.5 a_{2} l_{1} m_{2} \ddot{q}_{2} \cos{\left (q_{2} \right )}\nonumber\\
+&\qquad + 0.5 a_{2} l_{1} m_{2} \dot{q}_{1}^{2} \sin{\left (q_{2} \right )} - 1.0 a_{2} l_{1} m_{2} \dot{q}_{1} \dot{q}_{2} \sin{\left (q_{2} \right )}\nonumber\\
+&\qquad - 0.5 a_{2} l_{1} m_{2} \dot{q}_{2}^{2} \sin{\left (q_{2} \right )} + 0.5 g l_{1} m_{1} \cos{\left (q_{1} \right )} \nonumber\\
+&\qquad + 1.0 g l_{1} m_{2} \cos{\left (q_{1} \right )} + 0.583333333333333 l_{1}^{2} m_{1} \ddot{q}_{1}\nonumber\\
+&\qquad + 1.0 l_{1}^{2} m_{2} \ddot{q}_{1} + 2.09439510239427 m_{2} \ddot{q}_{1} r_{2}^{2} \nonumber\\
+&\qquad + 2.09439510239427 m_{2} \ddot{q}_{2} r_{2}^{2}
+\end{align}
+\end{equation}
+
+\end{document}
