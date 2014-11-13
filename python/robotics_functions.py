@@ -220,7 +220,7 @@ def sym_pt_jacobian(link_list_position):
 		jci = sy.Matrix(np.zeros(6)).T
 		for j in range(len(link_list)):
 			if j <= i:
-				if not link_list[i][-1] == 0:
+				if not link_list[j][-1] == 0:
 					j_pt.append( sy.Matrix.vstack((A0i[j][:3,:3]*k).cross(
 						sy.Matrix(O0i[i][:3])-sy.Matrix(A0i[j][:,3][:3])),
 						A0i[j][:3,:3]*k)
@@ -255,7 +255,11 @@ def sym_lagrangian(link_list_cm, M, I, qdot):
 	R = [Ai[:3,:3] for Ai in A]
 	O = [sy.Matrix(Ai[:,3][:3]) for Ai in A]
 	J = sym_pt_jacobian(link_list_cm)
+	for j in J:
+		sy.pprint(sy.simplify(sy.trigsimp(j)))
 	D = symsum([D_i([ J[i], M[i], I[i], R[i]]) for i in range( len(J))])
+	for i in range(len(J)):
+		sy.pprint(sy.simplify(sy.trigsimp(D_i([ J[i], M[i], I[i], R[i]]))))
 	K = .5*(qdot.T*(D)*qdot)
 	O0c = [A[i]*Ocm[i] for i in range(len(A))]
 	P = symsum( [g.T*M[i]*sy.Matrix(O0c[i][:3]) for i in range(len(J))])
