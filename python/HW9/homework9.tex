@@ -1,0 +1,69 @@
+\documentclass[10pt]{article}
+\usepackage{setspace}
+\usepackage{amsmath,amsfonts,amsthm,amssymb}
+\usepackage{color}
+\usepackage{fancyhdr}
+\usepackage{chngpage}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\usepackage{boxedminipage}
+
+\title{Homework 9  in \LaTeX}
+\author{Robert Brothers Mechanical Engineering Student @ UTSA}
+\begin{document}
+\doublespacing
+\footnotesize
+\maketitle
+\date
+
+\section{Question 1: The Lagrangian and Equations of Motion}
+\subsection{(a) Write an Expression for the Lagrangian of the Particle}
+\begin{equation}
+\begin{align}
+L  &= - 1.0 R g m_{1} \sin{\left (q_{1} \right )} + 0.5 \dot{q}_{1}^{2} \left(I_{1} + R^{2} m_{1}\right)
+\end{align}
+\end{equation}
+
+\subsection{(b) Find the Equation of Motion of the Particle}
+\begin{equation}
+\begin{align}
+\tau_{k} &= 1.0 I_{1} \ddot{q}_{1} + 1.0 R^{2} m_{1} \ddot{q}_{1} + 1.0 R g m_{1} \cos{\left (q_{1} \right )}
+\end{align}
+\end{equation}
+
+\section{Question 2: Equations of Motion of a Two Link Manipulator}
+\subsection{(a) Find the Lagrangian}
+\begin{equation}
+\begin{align}
+L  &= 1.0 g m_{2} q_{2} \cos{\left (q_{1} \right )} + 0.5 m_{2} \dot{q}_{2}^{2} \nonumber\\
+&\qquad + 0.5 \dot{q}_{1}^{2} \left(I_{1} + I_{2} + m_{2} q_{2}^{2}\right)
+\end{align}
+\end{equation}
+
+\subsection{(b) Find Equation of Motion}
+\begin{equation}
+\begin{align}
+\tau_{k} &= 1.0 g m_{2} q_{2} \sin{\left (q_{1} \right )} - 1.0 g m_{2} \cos{\left (q_{1} \right )}\nonumber\\
+&\qquad - 1.0 m_{2} q_{2} \dot{q}_{1}^{2} + 2.0 m_{2} q_{2} \dot{q}_{1} \dot{q}_{2}\nonumber\\
+&\qquad + 1.0 m_{2} \ddot{q}_{2} + 1.0 \ddot{q}_{1} \left(I_{1} + I_{2} + m_{2} q_{2}^{2}\right)
+\end{align}
+\end{equation}
+
+\section{Question 3: Equations of Motion of a Pendulum}
+\subsection{(a) Find the Lagrangian of the Pendulum}
+\begin{equation}
+\begin{align}
+L  &= l_{1} m_{2} \left(- 1.0 g \sin{\left (q_{1} \right )} + 0.5 l_{1} \dot{q}_{1}^{2}\right)
+\end{align}
+\end{equation}
+
+\subsection{(b) Find Equation of Motion}
+\begin{equation}
+\begin{align}
+\tau_{k} &= 1.0 l_{1} m_{2} \left(g \cos{\left (q_{1} \right )} + l_{1} \ddot{q}_{1}\right)
+\end{align}
+\end{equation}
+
+
+
+\end{document}

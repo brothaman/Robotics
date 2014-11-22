@@ -244,26 +244,39 @@ def D_i( vec):
 	[Ji, Mi, Ii, Ri] = vec
 	Jv = Ji[:3,:]
 	Jw = Ji[3:,:]
+	Ri = sy.eye(3)
 	return Jv.T*Mi*Jv + Jw.T*Ri*Ii*Ri.T*Jw
 
 
 # need a function to return the F from the lagrangian and a list of all the time dependent variables
 def sym_lagrangian(link_list_cm, M, I, qdot):
-	g = sy.Matrix([[0],[gravity],[0]])
+	g = sy.Matrix([[0],[-gravity],[0]])
 	[link_list, Ocm] = link_list_cm
 	A = sym_get_A0n(link_list)
 	R = [Ai[:3,:3] for Ai in A]
 	O = [sy.Matrix(Ai[:,3][:3]) for Ai in A]
 	J = sym_pt_jacobian(link_list_cm)
-	for j in J:
-		sy.pprint(sy.simplify(sy.trigsimp(j)))
 	D = symsum([D_i([ J[i], M[i], I[i], R[i]]) for i in range( len(J))])
-	for i in range(len(J)):
-		sy.pprint(sy.simplify(sy.trigsimp(D_i([ J[i], M[i], I[i], R[i]]))))
 	K = .5*(qdot.T*(D)*qdot)
 	O0c = [A[i]*Ocm[i] for i in range(len(A))]
 	P = symsum( [g.T*M[i]*sy.Matrix(O0c[i][:3]) for i in range(len(J))])
 	return K-P
+
+def equations_of_motion( L, qvec, qdvec, qddvec, tdv):
+	dlist = []
+	for qd in qdvec:
+		dlist.append(sy.diff(L, qd))
+	for i in range(len(dlist)):
+		dt = 0
+		for j in range(len(tdv)):
+			dt = dt + sy.diff(dlist[i], tdv[j][0])*tdv[j][1]
+		dlist[i] = dt
+		for j in dlist:
+			G = L.subs(zip(list(qdvec)+list(qddvec),[0 for jkfjsl in range(len(list(qdvec)+list(qddvec)))]))
+			dlist[i] = dlist[i]-sy.diff(G, qvec[i])
+	return dlist
+
+#def state_space( eom, qddvec):
 
 def sym_torque(link_list_cm, M, I, qdot, q, tdv_vec):
 	L = sym_lagrangian(link_list_cm, M, I, qdot)[0]
@@ -271,3 +284,23 @@ def sym_torque(link_list_cm, M, I, qdot, q, tdv_vec):
 	dLdq =  sum([sy.diff(L, q[i]) for i in range(len(q))])
 	ddtdLdq_dot = sum([sy.diff(dLdq_dot, tdv_vec[i][0])*tdv_vec[i][1] for i in range(len(tdv_vec))])
 	return ddtdLdq_dot - dLdq
+
+################################################################################
+############################ Trajectory Generation #############################
+def q_gen(order):
+	t = sy.symbols("t")
+	q = np.array([ t**i for i in range(order+1)])
+	qds = [np.array([sy.diff(val,t,i) for val in q]) for i in range(order)]
+	return qds
+
+def mat_builder( order, time):
+	t = sy.symbols("t")
+	time = np.array(time)
+	num_o_eqs = len(time)-1
+	q_s = q_gen( order)
+	q_list = [q_s for i in range(num_o_eqs)]
+	b = []
+	for i in range(len(q_list[0])):
+		b.append([[val[i], val[i]] for val in q_list])
+	print num_o_eqs
+
